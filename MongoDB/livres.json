@@ -1,0 +1,143 @@
+[
+  {
+    "titreLivre": "Le Petit Prince",
+    "auteurPrincipal": "Antoine de Saint-Exupéry",
+    "datePublication": "1943-04-06",
+    "nombrePages": 93,
+    "estDisponible": true,
+    "isbn": "978-2-07-061275-8",
+    "categories": ["Fiction", "Classique", "Philosophie"],
+    "prixAchat": 15.99,
+    "evaluation": 5,
+    "commentairesPerso": "Mon livre préféré depuis toujours"
+  },
+  {
+    "titreLivre": "1984",
+    "auteurPrincipal": "George Orwell",
+    "datePublication": "1949-06-08",
+    "nombrePages": 328,
+    "estDisponible": true,
+    "isbn": "978-0-45-228423-4",
+    "categories": ["Dystopie", "Science-Fiction", "Classique"],
+    "prixAchat": 22.50,
+    "evaluation": 5,
+    "commentairesPerso": "Une vision effrayante mais fascinante"
+  },
+  {
+    "titreLivre": "Harry Potter à l'école des sorciers",
+    "auteurPrincipal": "J.K. Rowling",
+    "datePublication": "1997-06-26",
+    "nombrePages": 320,
+    "estDisponible": false,
+    "isbn": "978-2-07-054127-0",
+    "categories": ["Fantastique", "Jeunesse"],
+    "prixAchat": 24.95,
+    "evaluation": 4,
+    "commentairesPerso": "Prêté à ma soeur"
+  },
+  {
+    "titreLivre": "Le Seigneur des Anneaux - La Communauté de l'Anneau",
+    "auteurPrincipal": "J.R.R. Tolkien",
+    "datePublication": "1954-07-29",
+    "nombrePages": 527,
+    "estDisponible": true,
+    "isbn": "978-2-26-601331-9",
+    "categories": ["Fantastique", "Aventure", "Classique"],
+    "prixAchat": 35.00,
+    "evaluation": 5
+  },
+  {
+    "titreLivre": "L'Étranger",
+    "auteurPrincipal": "Albert Camus",
+    "datePublication": "1942-05-19",
+    "nombrePages": 159,
+    "estDisponible": true,
+    "isbn": "978-2-07-036002-4",
+    "categories": ["Fiction", "Philosophie", "Classique"],
+    "prixAchat": 18.75,
+    "evaluation": 4,
+    "commentairesPerso": "À relire bientôt"
+  },
+  {
+    "titreLivre": "Dune",
+    "auteurPrincipal": "Frank Herbert",
+    "datePublication": "1965-06-01",
+    "nombrePages": 896,
+    "estDisponible": false,
+    "isbn": "978-0-44-117271-9",
+    "categories": ["Science-Fiction", "Aventure"],
+    "prixAchat": 42.99,
+    "commentairesPerso": "Pas encore lu"
+  },
+  {
+    "titreLivre": "Les Misérables",
+    "auteurPrincipal": "Victor Hugo",
+    "datePublication": "1862-03-30",
+    "nombrePages": 1662,
+    "estDisponible": true,
+    "isbn": "978-2-25-318803-0",
+    "categories": ["Classique", "Fiction", "Histoire"],
+    "prixAchat": 45.00,
+    "evaluation": 5,
+    "commentairesPerso": "Un chef d'oeuvre monumental"
+  },
+  {
+    "titreLivre": "Le Guide du voyageur galactique",
+    "auteurPrincipal": "Douglas Adams",
+    "datePublication": "1979-10-12",
+    "nombrePages": 224,
+    "estDisponible": true,
+    "isbn": "978-2-29-033813-0",
+    "categories": ["Science-Fiction", "Humour"],
+    "prixAchat": 19.99,
+    "evaluation": 4,
+    "commentairesPerso": "42!"
+  },
+  {
+    "titreLivre": "Fondation",
+    "auteurPrincipal": "Isaac Asimov",
+    "datePublication": "1951-05-01",
+    "nombrePages": 256,
+    "estDisponible": true,
+    "isbn": "978-2-29-033158-2",
+    "categories": ["Science-Fiction"],
+    "prixAchat": 21.50,
+    "evaluation": 4
+  },
+  {
+    "titreLivre": "L'Alchimiste",
+    "auteurPrincipal": "Paulo Coelho",
+    "datePublication": "1988-01-01",
+    "nombrePages": 224,
+    "estDisponible": true,
+    "isbn": "978-2-25-314499-9",
+    "categories": ["Fiction", "Philosophie", "Spiritualité"],
+    "prixAchat": 16.95,
+    "evaluation": 3,
+    "commentairesPerso": "Sympa mais un peu trop spirituel pour moi"
+  },
+  {
+    "titreLivre": "Fahrenheit 451",
+    "auteurPrincipal": "Ray Bradbury",
+    "datePublication": "1953-10-19",
+    "nombrePages": 227,
+    "estDisponible": true,
+    "isbn": "978-2-07-037163-1",
+    "categories": ["Science-Fiction", "Dystopie"],
+    "prixAchat": 20.00,
+    "evaluation": 4,
+    "commentairesPerso": "Très pertinent même aujourd'hui"
+  },
+  {
+    "titreLivre": "Le Hobbit",
+    "auteurPrincipal": "J.R.R. Tolkien",
+    "datePublication": "1937-09-21",
+    "nombrePages": 374,
+    "estDisponible": true,
+    "isbn": "978-2-26-600000-5",
+    "categories": ["Fantastique", "Aventure", "Jeunesse"],
+    "prixAchat": 28.50,
+    "evaluation": 5,
+    "commentairesPerso": "Parfait pour débuter avec Tolkien"
+  }
+]
