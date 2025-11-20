@@ -3,13 +3,6 @@
  */
 
 import mongoose, { Schema, model } from 'mongoose';
-import { isString } from 'jet-validators';
-import { parseObject, TParseOnError } from 'jet-validators/utils';
-
-import { isRelationalKey, transIsDate } from '@src/common/util/validators';
-import { IModel } from './common/types';
-
-
 
 // Interface pour représenter un utilisateur
 export interface IUser {
@@ -18,6 +11,18 @@ export interface IUser {
   email: string;
   motDePasse: string;
   dateCreation: Date;
+}
+
+// Interface pour le login d'un utilisateur
+export interface IUserLogin {
+  email: string;
+  motDePasse: string;
+}
+
+// Validation pour le format de l'email
+function validerEmail(email: string): boolean {
+  const regexEmail = /^\S+@\S+\.\S+$/;
+  return regexEmail.test(email);
 }
 
 const UserSchema = new Schema<IUser>(
@@ -33,7 +38,10 @@ const UserSchema = new Schema<IUser>(
       required: [true, "L'email est requis."],
       unique: true,
       lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, "Le format de l'email est invalide."],
+      validate: {
+        validator: validerEmail,
+        message: "Le format de l'email est invalide.",
+      },
     },
     motDePasse: {
       type: String,
@@ -47,26 +55,6 @@ const UserSchema = new Schema<IUser>(
   },
   { collection: 'users' },
 );
-
-// Hasher le mot de passe avant de sauvegarder
-UserSchema.pre('save', async function (next) {
-  // Si le mot de passe n'a pas été modifié, on continue
-  if (!this.isModified('motDePasse')) {
-    next();
-  } else {
-    // On hash le mot de passe
-    const salt = await bcrypt.genSalt(10);
-    this.motDePasse = await bcrypt.hash(this.motDePasse, salt);
-    next();
-  }
-});
-
-// Méthode pour comparer les mots de passe
-UserSchema.methods.comparePassword = async function (
-  motDePasseCandidat: string,
-): Promise<boolean> {
-  return await bcrypt.compare(motDePasseCandidat, this.motDePasse);
-};
 
 mongoose.pluralize(null);
 

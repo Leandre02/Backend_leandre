@@ -2,6 +2,7 @@
  * Projet intégrateur - Dev web 3
  */
 
+import { RouteError } from '@src/common/util/route-errors';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import LivreRepo from '@src/repos/LivreRepo';
 import { ILivre } from '@src/models/Livre';
@@ -54,7 +55,7 @@ async function addOne(livre: ILivre): Promise<void> {
 async function updateOne(livre: ILivre): Promise<ILivre> {
   const persists = await LivreRepo.getOne(livre._id);
   if (!persists) {
-    throw new Error(HttpStatusCodes.NOT_FOUND,LIVRE_NOT_FOUND_ERR);
+    throw new RouteError(HttpStatusCodes.NOT_FOUND,LIVRE_NOT_FOUND_ERR);
   } else {
     return LivreRepo.update(livre);
   }
@@ -66,7 +67,7 @@ async function updateOne(livre: ILivre): Promise<ILivre> {
 async function deleteOne(id: mongoose.Types.ObjectId): Promise<void> {
   const persists = await LivreRepo.getOne(id);
   if (!persists) {
-    throw new Error(LIVRE_NOT_FOUND_ERR);
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, LIVRE_NOT_FOUND_ERR);
   } else {
     await LivreRepo.deleteOne(id);
   }

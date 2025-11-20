@@ -34,7 +34,7 @@ async function getAll(): Promise<ILivre[]> {
  * Extraire un livre par son ID
  */
 async function getOne(id: mongoose.Types.ObjectId): Promise<ILivre> {
-  const livre = await Livre.findById(id);
+  const livre = await Livre.findOne({ _id: id });
   if (!livre) {
     console.error(`Le livre avec l'ID ${id} est introuvable.`);
     return livreNull;
@@ -70,18 +70,13 @@ async function add(livre: ILivre): Promise<void> {
   await nouveauLivre.save();
 }
 
-/**
- * Vérifie si un livre existe dans la BD
- */
-async function persists(id: mongoose.Types.ObjectId): Promise<boolean> {
-  return (await Livre.findById(id)) !== null;
-}
+
 
 /**
  * Met à jour un livre
  */
 async function update(livre: ILivre): Promise<ILivre> {
-  const livreAModifier = await Livre.findById(livre._id);
+  const livreAModifier = await Livre.findOne({ _id: livre._id });
   if (!livreAModifier) {
     console.error(`Le livre avec l'ID ${livre._id} est introuvable.`);
     return livreNull;
@@ -107,7 +102,7 @@ async function update(livre: ILivre): Promise<ILivre> {
  * Supprimer un livre
  */
 async function deleteOne(id: mongoose.Types.ObjectId): Promise<boolean> {
-  const resultat = await Livre.findByIdAndDelete(id);
+  const resultat = await Livre.deleteOne({ _id: id });
   if (!resultat) {
     console.error(`Le livre avec l'ID ${id} est introuvable.`);
     return false;
@@ -124,7 +119,6 @@ export default {
   getDisponibles,
   getByCategorie,
   add,
-  persists,
   update,
   deleteOne,
 } as const;

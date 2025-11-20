@@ -3,7 +3,6 @@
  */
 
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
-
 import { IReq, IRes } from './common/types';
 import LivreService from '@src/services/LivreService';
 import { ILivre } from '@src/models/Livre';
@@ -30,20 +29,18 @@ async function getAll(_: IReq, res: IRes) {
  * Extraire un livre par son ID
  */
 async function getOne(req: IReq, res: IRes) {
-  const id = req.params.id;
+  const id = req.params.id as string;
 
-  // Vérifier si l'ID est valide
+  // check si l'ID est valide
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
       .json({ error: INVALID_ID_ERR });
-  } else {
-    // continue
   }
 
   const livre = await LivreService.getOne(new mongoose.Types.ObjectId(id));
 
-  // Check si le livre existe
+  // check si le livre existe
   if (!livre || livre.titreLivre === '') {
     return res
       .status(HttpStatusCodes.NOT_FOUND)
@@ -65,18 +62,17 @@ async function getDisponibles(_: IReq, res: IRes) {
  * Extraire tous les livres par catégorie
  */
 async function getByCategorie(req: IReq, res: IRes) {
-  const categorie = req.params.categorie;
+  const categorie = req.params.categorie as string;
 
   if (!categorie) {
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
       .json({ error: INVALID_CATEGORIE_ERR });
-  } else {
-    // continue
   }
 
   const livres = await LivreService.getByCategorie(categorie);
 
+  // check si des livres ont été trouvés
   if (livres.length === 0) {
     return res
       .status(HttpStatusCodes.NOT_FOUND)
@@ -90,15 +86,16 @@ async function getByCategorie(req: IReq, res: IRes) {
  * Ajouter un livre
  */
 async function add(req: IReq, res: IRes) {
-  const { livre } = req.body;
+  const livre = req.body.livre as ILivre;
 
+  // Promesse d'ajout du livre
   try {
-    await LivreService.addOne(livre as ILivre);
+    await LivreService.addOne(livre);
     res
-      .status(HttpStatusCodes.CREATED)
+      .status(HttpStatusCodes.CREATED).end()
       .json({ message: 'Livre ajouté avec succès' });
   } catch (erreur: any) {
-    // Erreur de validation Mongoose
+    // erreur de validation Mongoose
     if (erreur.name === 'ValidationError') {
       return res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -115,28 +112,27 @@ async function add(req: IReq, res: IRes) {
  * Mettre à jour un livre
  */
 async function update(req: IReq, res: IRes) {
-  const { livre } = req.body;
-  const id = req.params.id;
+  const livre = req.body.livre as ILivre;
+  const id = req.params.id as string;
 
-  // Vérifier si l'ID est valide
+  // check si l'ID est valide
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
       .json({ error: INVALID_ID_ERR });
-  } else {
-    // continue
   }
 
-  // On ajoute l'ID du paramètre au livre
+  // ajoute l'ID du paramètre au livre
   livre._id = new mongoose.Types.ObjectId(id);
 
+  // Promesse de mise à jour du livre
   try {
-    await LivreService.updateOne(livre as ILivre);
+    await LivreService.updateOne(livre);
     res
-      .status(HttpStatusCodes.OK)
+      .status(HttpStatusCodes.OK).end()
       .json({ message: 'Livre modifié avec succès' });
   } catch (erreur: any) {
-    if (erreur.message === LivreService.LIVRE_NOT_FOUND_ERR) {
+    if (erreur.message === LIVRE_NOT_FOUND_ERR) {
       return res
         .status(HttpStatusCodes.NOT_FOUND)
         .json({ error: LIVRE_NOT_FOUND_ERR });
@@ -156,24 +152,23 @@ async function update(req: IReq, res: IRes) {
  * Supprimer un livre
  */
 async function deleteOne(req: IReq, res: IRes) {
-  const id = req.params.id;
+  const id = req.params.id as string;
 
-  // Vérifier si l'ID est valide
+  // check si l'ID est valide
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
       .json({ error: INVALID_ID_ERR });
-  } else {
-    // continue
   }
 
+  // Promesse de suppression du livre
   try {
     await LivreService.deleteOne(new mongoose.Types.ObjectId(id));
     res
-      .status(HttpStatusCodes.OK)
+      .status(HttpStatusCodes.OK).end()
       .json({ message: 'Livre supprimé avec succès' });
   } catch (erreur: any) {
-    if (erreur.message === LivreService.LIVRE_NOT_FOUND_ERR) {
+    if (erreur.message === LIVRE_NOT_FOUND_ERR) {
       return res
         .status(HttpStatusCodes.NOT_FOUND)
         .json({ error: LIVRE_NOT_FOUND_ERR });

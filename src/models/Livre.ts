@@ -16,7 +16,7 @@ export interface ILivre {
   isbn: string;
   categories: string[];
   prixAchat: number;
-  evaluation?: number;
+  evaluation?: number; 
   commentairesPerso?: string;
 }
 
@@ -36,12 +36,13 @@ const categoriesValides = [
   'Romance',
 ];
 
-// Validation pour l'International Standard Book Number (ISBN)
-// Format accepté: 978-X-XX-XXXXXX-X ou 979-X-XX-XXXXXX-X
+/*Validation pour l'International Standard Book Number (ISBN)
+* Doit commencer par 978 ou 979 et avoir 13 chiffres
+* Fromat attendu: 978-X-XX-XXXXXX-X
+* */
 function validerISBN(isbn: string): boolean {
   const isbnSansTirets = isbn.replace(/-/g, '');
 
-  // Doit commencer par 978 ou 979 et avoir 13 chiffres
   if (!/^(978|979)\d{10}$/.test(isbnSansTirets)) {
     return false;
   } else {
@@ -49,7 +50,7 @@ function validerISBN(isbn: string): boolean {
   }
 }
 
-// Validation pour la date de publication
+/* Validation pour la date de publication */
 function validerDatePublication(date: Date): boolean {
   const maintenant = new Date();
   if (date > maintenant) {
@@ -57,6 +58,14 @@ function validerDatePublication(date: Date): boolean {
   } else {
     return true;
   }
+}
+
+/* Validation pour les catégories */
+function validerCategories(categories: string[]): boolean {
+  if (categories.length === 0) {
+    return false;
+  }
+  return categories.every((categorie) => categoriesValides.includes(categorie));
 }
 
 const LivreSchema = new Schema<ILivre>(
@@ -108,15 +117,7 @@ const LivreSchema = new Schema<ILivre>(
       type: [String],
       required: [true, 'Au moins une catégorie est requise.'],
       validate: {
-        validator: function (tableau: string[]) {
-          // Check si le tableau a au moins 1 élément
-          if (tableau.length === 0) {
-            return false;
-          } else {
-            // Check que toutes les catégories sont valides
-            return tableau.every((cat) => categoriesValides.includes(cat));
-          }
-        },
+        validator: validerCategories,
         message:
           'Les catégories doivent être valides et au moins une catégorie est requise.',
       },
@@ -125,7 +126,7 @@ const LivreSchema = new Schema<ILivre>(
       type: Number,
       required: [true, "Le prix d'achat est requis."],
       min: [0, "Le prix d'achat doit être positif ou zéro."],
-      max: [10000, "Le prix d'achat ne peut pas dépasser 10000$."],
+      max: [100, "Le prix d'achat ne peut pas dépasser 100$."],
     },
     evaluation: {
       type: Number,

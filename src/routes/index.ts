@@ -5,7 +5,7 @@
 import { Router } from 'express';
 import Paths from '@src/common/constants/Paths';
 import LivreRoutes from './LivreRoutes';
-import JetonRoutes from './JetonRoutes';
+import AuthRoutes from './AuthRoutes';
 import { verifierAuth } from '@src/middleware/authenticateToken';
 import morgan from 'morgan';
 
@@ -17,14 +17,10 @@ const apiRouter = Router();
 
 const livreRouter = Router();
 const authRouter = Router();
-const tokenRouter = Router();
-const userRouter = Router();
 
-// Generate Token
-tokenRouter.get(Paths.GenerateToken.Get, JetonRoutes.generateToken);
-
-// ** Add tokenRouter ** //
-apiRouter.use(Paths.GenerateToken.Base, tokenRouter);
+// Routes pour l'authentification (publiques)
+authRouter.post(Paths.Auth.Register, AuthRoutes.register);
+authRouter.post(Paths.Auth.Login, AuthRoutes.login);
 
 // Routes pour les livres
 // Routes publiques
@@ -38,21 +34,12 @@ livreRouter.post(Paths.Livres.Add, verifierAuth, LivreRoutes.add);
 livreRouter.put(Paths.Livres.Update, verifierAuth, LivreRoutes.update);
 livreRouter.delete(Paths.Livres.Delete, verifierAuth, LivreRoutes.deleteOne);
 
-// Routes pour l'authentification
-userRouter.get(Paths.Users.Get, UserRoutes.getAll);
-userRouter.post(Paths.Users.Add, UserRoutes.add);
-userRouter.put(Paths.Users.Update, UserRoutes.update);
-userRouter.delete(Paths.Users.Delete, UserRoutes.delete);
-
-
 // Ajouter les routers au router principal
 apiRouter.use(Paths.Livres.Base, livreRouter);
 apiRouter.use(Paths.Auth.Base, authRouter);
-apiRouter.use(Paths.Users.Base, userRouter);
 
-// Pour le logging des requêtes
+// Pour le logging des requetes
 apiRouter.use(morgan('dev'));
-
 
 // **** Export default **** //
 

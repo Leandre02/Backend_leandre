@@ -3,9 +3,9 @@
  */
 
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
-import { IReq, IRes } from '@src/common/types';
 import { User } from '@src/models/User';
 import jwt from 'jsonwebtoken';
+import { IReq, IRes } from './common/types';
 
 // **** Constantes **** //
 
@@ -23,7 +23,7 @@ async function register(req: IReq, res: IRes) {
   try {
     const { nom, email, motDePasse } = req.body;
 
-    // Vérifier que tous les champs sont présents
+    // check si tous les champs sont présents
     if (!nom || !email || !motDePasse) {
       return res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -32,7 +32,7 @@ async function register(req: IReq, res: IRes) {
       // continue
     }
 
-    // Vérifier si l'utilisateur existe déjà
+    // check si l'utilisateur existe déjà
     const userExiste = await User.findOne({ email });
     if (userExiste) {
       return res
@@ -42,7 +42,7 @@ async function register(req: IReq, res: IRes) {
       // continue
     }
 
-    // Créer le nouvel utilisateur
+    // créer le nouvel utilisateur
     const nouvelUser = new User({
       nom,
       email,
@@ -51,7 +51,7 @@ async function register(req: IReq, res: IRes) {
 
     await nouvelUser.save();
 
-    // Créer le token JWT
+    // créer le token JWT
     const token = jwt.sign(
       { id: nouvelUser._id, email: nouvelUser.email },
       process.env.JWT_SECRET || 'secret_par_defaut',
@@ -68,7 +68,7 @@ async function register(req: IReq, res: IRes) {
       },
     });
   } catch (erreur: any) {
-    // Erreur de validation Mongoose
+    // erreur de validation Mongoose
     if (erreur.name === 'ValidationError') {
       return res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -88,7 +88,7 @@ async function login(req: IReq, res: IRes) {
   try {
     const { email, motDePasse } = req.body;
 
-    // Vérifier que tous les champs sont présents
+    // check si tous les champs sont présents
     if (!email || !motDePasse) {
       return res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -97,7 +97,7 @@ async function login(req: IReq, res: IRes) {
       // continue
     }
 
-    // Trouver l'utilisateur
+    // trouver l'utilisateur
     const user = await User.findOne({ email });
     if (!user) {
       return res
@@ -107,9 +107,8 @@ async function login(req: IReq, res: IRes) {
       // continue
     }
 
-    // Vérifier le mot de passe
-    const motDePasseValide = await user.comparePassword(motDePasse);
-    if (!motDePasseValide) {
+    // check le mot de passe (comparaison simple, pas de hash)
+    if (user.motDePasse !== motDePasse) {
       return res
         .status(HttpStatusCodes.UNAUTHORIZED)
         .json({ error: INVALID_CREDENTIALS_ERR });
@@ -117,7 +116,7 @@ async function login(req: IReq, res: IRes) {
       // continue
     }
 
-    // Créer le token JWT
+    // créer le token JWT
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET || 'secret_par_defaut',

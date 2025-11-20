@@ -14,5 +14,5 @@ import { parseValidationErr, TRes } from './common/util';
 import { agent } from './support/setup';
 
 // Données bidon pour les tests ( simulacre de Get)
-const livresTest = [
+const DB_LIVRES = [
     LivreService.
