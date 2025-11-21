@@ -33,14 +33,9 @@ async function getAll(): Promise<ILivre[]> {
 /**
  * Extraire un livre par son ID
  */
-async function getOne(id: mongoose.Types.ObjectId): Promise<ILivre> {
+async function getOne(id: mongoose.Types.ObjectId): Promise<ILivre | null> {
   const livre = await Livre.findOne({ _id: id });
-  if (!livre) {
-    console.error(`Le livre avec l'ID ${id} est introuvable.`);
-    return livreNull;
-  } else {
-    return livre;
-  }
+  return livre;
 }
 
 /**

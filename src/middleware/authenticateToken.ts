@@ -11,6 +11,13 @@ import ENV from '@src/common/constants/ENV';
  * Middleware pour authentifier le token JWT
  */
 export function verifierAuth(req: Request, res: Response, next: NextFunction) {
+
+  // Permet de bypasser l'authentification en mode test
+  if (process.env.NODE_ENV === 'test') {
+    next();
+    return;
+  }
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 

@@ -92,7 +92,7 @@ async function add(req: IReq, res: IRes) {
   try {
     await LivreService.addOne(livre);
     res
-      .status(HttpStatusCodes.CREATED).end()
+      .status(HttpStatusCodes.CREATED)
       .json({ message: 'Livre ajouté avec succès' });
   } catch (erreur: any) {
     // erreur de validation Mongoose
@@ -129,7 +129,7 @@ async function update(req: IReq, res: IRes) {
   try {
     await LivreService.updateOne(livre);
     res
-      .status(HttpStatusCodes.OK).end()
+      .status(HttpStatusCodes.OK)
       .json({ message: 'Livre modifié avec succès' });
   } catch (erreur: any) {
     if (erreur.message === LIVRE_NOT_FOUND_ERR) {
@@ -165,7 +165,7 @@ async function deleteOne(req: IReq, res: IRes) {
   try {
     await LivreService.deleteOne(new mongoose.Types.ObjectId(id));
     res
-      .status(HttpStatusCodes.OK).end()
+      .status(HttpStatusCodes.OK)
       .json({ message: 'Livre supprimé avec succès' });
   } catch (erreur: any) {
     if (erreur.message === LIVRE_NOT_FOUND_ERR) {

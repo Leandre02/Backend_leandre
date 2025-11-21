@@ -24,7 +24,7 @@ function getAll(): Promise<ILivre[]> {
 /**
  * Lire un livre par son ID
  */
-function getOne(id: mongoose.Types.ObjectId): Promise<ILivre> {
+function getOne(id: mongoose.Types.ObjectId): Promise<ILivre | null> {
   return LivreRepo.getOne(id);
 }
 
