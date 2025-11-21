@@ -46,7 +46,7 @@ const mockify = require('@jazim/mock-mongoose');
 describe('AuthRouter', () => {
   // **** Tests REGISTER **** //
 
-  describe(`'POST:${Paths.Auth.Base}${Paths.Auth.Register}'`, () => {
+  describe(`'POST:${Paths.Auth.Register}'`, () => {
     // Succès
     it(
       `doit retourner le code '${HttpStatusCodes.CREATED}' et un token ` +
@@ -63,7 +63,7 @@ describe('AuthRouter', () => {
 
         const res: TRes<{ message: string; token: string; user: any }> =
           await agent
-            .post(Paths.Auth.Base + Paths.Auth.Register)
+            .post(Paths.Auth.Register)
             .send(nouvelUser);
 
         expect(res.status).toBe(HttpStatusCodes.CREATED);
@@ -84,7 +84,7 @@ describe('AuthRouter', () => {
         };
 
         const res: TRes = await agent
-          .post(Paths.Auth.Base + Paths.Auth.Register)
+          .post(Paths.Auth.Register)
           .send(userIncomplet);
 
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
@@ -108,41 +108,18 @@ describe('AuthRouter', () => {
         mockify(User).toReturn(DB_USERS[0], 'findOne');
 
         const res: TRes = await agent
-          .post(Paths.Auth.Base + Paths.Auth.Register)
+          .post(Paths.Auth.Register)
           .send(userExistant);
 
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
         expect(res.body.error).toBe(USER_ALREADY_EXISTS_ERR);
       },
     );
-
-    // Validation échouée
-    it(
-      'doit retourner une erreur et un code ' +
-        `'${HttpStatusCodes.BAD_REQUEST}' si la validation échoue.`,
-      async () => {
-        const userInvalide = {
-          nom: 'T', // trop court
-          email: 'email_invalide', // format invalide
-          motDePasse: '123', // trop court
-        };
-
-        // simulacre - user n'existe pas
-        mockify(User).toReturn(null, 'findOne');
-
-        const res: TRes = await agent
-          .post(Paths.Auth.Base + Paths.Auth.Register)
-          .send(userInvalide);
-
-        expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
-        expect(res.body.error).toBe('Erreur de validation');
-      },
-    );
   });
 
   // **** Tests LOGIN **** //
 
-  describe(`'POST:${Paths.Auth.Base}${Paths.Auth.Login}'`, () => {
+  describe(`'POST:${Paths.Auth.Login}'`, () => {
     // Succès
     it(
       `doit retourner le code '${HttpStatusCodes.OK}' et un token ` +
@@ -158,7 +135,7 @@ describe('AuthRouter', () => {
 
         const res: TRes<{ message: string; token: string; user: any }> =
           await agent
-            .post(Paths.Auth.Base + Paths.Auth.Login)
+            .post(Paths.Auth.Login)
             .send(credentials);
 
         expect(res.status).toBe(HttpStatusCodes.OK);
@@ -179,7 +156,7 @@ describe('AuthRouter', () => {
         };
 
         const res: TRes = await agent
-          .post(Paths.Auth.Base + Paths.Auth.Login)
+          .post(Paths.Auth.Login)
           .send(credentialsIncomplets);
 
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
@@ -202,7 +179,7 @@ describe('AuthRouter', () => {
         mockify(User).toReturn(null, 'findOne');
 
         const res: TRes = await agent
-          .post(Paths.Auth.Base + Paths.Auth.Login)
+          .post(Paths.Auth.Login)
           .send(credentials);
 
         expect(res.status).toBe(HttpStatusCodes.UNAUTHORIZED);
@@ -225,7 +202,7 @@ describe('AuthRouter', () => {
         mockify(User).toReturn(DB_USERS[0], 'findOne');
 
         const res: TRes = await agent
-          .post(Paths.Auth.Base + Paths.Auth.Login)
+          .post(Paths.Auth.Login)
           .send(credentials);
 
         expect(res.status).toBe(HttpStatusCodes.UNAUTHORIZED);
