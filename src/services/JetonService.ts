@@ -7,11 +7,12 @@ import jwt from 'jsonwebtoken';
 import { RouteError } from '@src/common/util/route-errors';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import ENV from '@src/common/constants/ENV';
+import UserService from '@src/services/UserService';
+import { INVALID_CREDENTIALS_ERR } from '@src/routes/JetonRoutes';
 
 // **** Variables **** //
 
 export const UTILISATEUR_NOT_FOUND_ERR = 'Utilisateur non trouvé';
-export const INVALID_CREDENTIALS_ERR = 'Email ou mot de passe incorrect';
 
 // **** Fonctions **** //
 
@@ -20,8 +21,7 @@ export const INVALID_CREDENTIALS_ERR = 'Email ou mot de passe incorrect';
  */
 async function generateToken(utilisateur: IUserLogin): Promise<string> {
   // check si l'utilisateur existe dans la BD
-  // TODO : JetonService.generateToken devrait appeler UserService.findByEmail au lieu de User.findOne.
-  const utilisateurBD = await User.findOne({ email: utilisateur.email });
+  const utilisateurBD = await UserService.findByEmail(utilisateur.email);
 
   if (!utilisateurBD) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, UTILISATEUR_NOT_FOUND_ERR);

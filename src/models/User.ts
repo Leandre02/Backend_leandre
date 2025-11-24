@@ -6,7 +6,7 @@ import mongoose, { Schema, model } from 'mongoose';
 
 // Interface pour représenter un utilisateur
 export interface IUser {
-  _id: mongoose.Types.ObjectId;
+  _id?: mongoose.Types.ObjectId;
   nom: string;
   email: string;
   motDePasse: string;

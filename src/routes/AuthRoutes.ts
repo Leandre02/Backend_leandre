@@ -3,17 +3,14 @@
  */
 
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
-import { User } from '@src/models/User';
 import jwt from 'jsonwebtoken';
 import { IReq, IRes } from './common/types';
 import ENV from '@src/common/constants/ENV';
+import UserService, { USER_ALREADY_EXISTS_ERR} from '@src/services/UserService';
+import { INVALID_CREDENTIALS_ERR } from '@src/routes/JetonRoutes';
 
 
 // **** Constantes **** //
-
-export const USER_ALREADY_EXISTS_ERR =
-  'Un utilisateur avec cet email existe déjà';
-export const INVALID_CREDENTIALS_ERR = 'Email ou mot de passe incorrect';
 export const MISSING_FIELDS_ERR = 'Tous les champs sont requis';
 
 // **** Fonctions **** //
@@ -23,52 +20,47 @@ export const MISSING_FIELDS_ERR = 'Tous les champs sont requis';
  */
 async function register(req: IReq, res: IRes) {
   try {
-    const { nom, email, motDePasse } = req.body;
+   const { nom, email, motDePasse } = req.body as {
+     nom: string;
+     email: string;
+     motDePasse: string;
+   };
 
     // check si tous les champs sont présents
     if (!nom || !email || !motDePasse) {
       return res
         .status(HttpStatusCodes.BAD_REQUEST)
         .json({ error: MISSING_FIELDS_ERR });
-    } else {
-      // continue
     }
 
-    // check si l'utilisateur existe déjà
-    const userExiste = await User.findOne({ email });
-    if (userExiste) {
+    try {
+-    await UserService.register({
+        nom,
+        email,
+        motDePasse,
+        dateCreation: new Date(),
+      });
+    } catch (erreur) {
+      if (erreur.message === USER_ALREADY_EXISTS_ERR) {
+        return res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json({ error: USER_ALREADY_EXISTS_ERR });
+      }
       return res
-        .status(HttpStatusCodes.BAD_REQUEST)
-        .json({ error: USER_ALREADY_EXISTS_ERR });
-    } else {
-      // continue
+        .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Erreur lors de l'inscription" });
     }
-
-    // créer le nouvel utilisateur
-    const nouvelUser = new User({
-      nom,
-      email,
-      motDePasse,
-    });
-
-    await nouvelUser.save();
-
     // créer le token JWT
-    const token = jwt.sign(
-      { id: nouvelUser._id, email: nouvelUser.email },
-      ENV.Jwtsecret as string,
-    );
+    const token = jwt.sign({ email }, ENV.Jwtsecret as string);
+
 
     res.status(HttpStatusCodes.CREATED).json({
       message: 'Utilisateur créé avec succès',
       token,
-      user: {
-        id: nouvelUser._id,
-        nom: nouvelUser.nom,
-        email: nouvelUser.email,
-      },
+      user: { nom, email },
     });
-  } catch (erreur: any) {
+  } catch (erreur) {
+
     // erreur de validation Mongoose
     if (erreur.name === 'ValidationError') {
       return res
@@ -87,41 +79,26 @@ async function register(req: IReq, res: IRes) {
  */
 async function login(req: IReq, res: IRes) {
   try {
-    const { email, motDePasse } = req.body;
+    const { email, motDePasse } = req.body as {
+      email: string;
+      motDePasse: string;
+    };
 
     // check si tous les champs sont présents
     if (!email || !motDePasse) {
       return res
         .status(HttpStatusCodes.BAD_REQUEST)
         .json({ error: MISSING_FIELDS_ERR });
-    } else {
-      // continue
     }
+
+    try {
 
     // trouver l'utilisateur
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res
-        .status(HttpStatusCodes.UNAUTHORIZED)
-        .json({ error: INVALID_CREDENTIALS_ERR });
-    } else {
-      // continue
-    }
+    const user = await UserService.validatePassword(email, motDePasse);
 
-    // check le mot de passe (comparaison simple, pas de hash)
-    if (user.motDePasse !== motDePasse) {
-      return res
-        .status(HttpStatusCodes.UNAUTHORIZED)
-        .json({ error: INVALID_CREDENTIALS_ERR });
-    } else {
-      // continue
-    }
-
-    // créer le token JWT
     const token = jwt.sign(
       { id: user._id, email: user.email },
       ENV.Jwtsecret as string,
-      
     );
 
     res.status(HttpStatusCodes.OK).json({
@@ -133,12 +110,22 @@ async function login(req: IReq, res: IRes) {
         email: user.email,
       },
     });
-  } catch (erreur) {
-    return res
-      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: 'Erreur lors de la connexion' });
   }
+    catch (erreur) {
+      if (erreur.message === INVALID_CREDENTIALS_ERR) {
+        return res.status(HttpStatusCodes.UNAUTHORIZED).json({ error: INVALID_CREDENTIALS_ERR });
+      }
+      return res.status(500).json({ error: 'Erreur lors de la connexion' });
+    }
+  } catch {
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: 'Erreur lors de la connexion',
+    });
+  }
+    
 }
+
+
 
 // **** Export default **** //
 

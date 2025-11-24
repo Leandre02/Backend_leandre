@@ -85,16 +85,18 @@ const mockify = require('@jazim/mock-mongoose');
 describe('LivreRouter', () => {
 
   beforeAll(async () => {
-    // simulacre - pour que /generatetoken trouve un user
-    mockify(User).toReturn(DB_USER_TOKEN, 'findOne');
+  // simulacre - pour que /generatetoken trouve un user
+  mockify(User).toReturn(DB_USER_TOKEN, 'findOne');
 
-    const res = await agent.post(Paths.GenerateToken.Get).send({
+  const res = await agent
+    .post(Paths.GenerateToken.Get)
+    .send({
       email: DB_USER_TOKEN.email,
       motDePasse: DB_USER_TOKEN.motDePasse,
     });
 
-    tokenValide = res.body.token;
-  });
+  tokenValide = res.body.token;
+});
 
 
   // **** Tests GET ALL **** //

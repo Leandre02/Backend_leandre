@@ -26,10 +26,27 @@ async function generateToken(req: IReq, res: IRes) {
       .json({ error: 'Email et mot de passe requis' });
   }
 
-  const userLogin: IUserLogin = { email, motDePasse };
-  const token = await JetonService.generateToken(userLogin);
-  return res.send({ token });
+  try {
+    const userLogin: IUserLogin = { email, motDePasse };
+    const token = await JetonService.generateToken(userLogin);
+    return res.status(HttpStatusCodes.OK).send({ token });
+  } catch (erreur) {
+    if (erreur.message === UTILISATEUR_NOT_FOUND_ERR) {
+      return res
+        .status(HttpStatusCodes.NOT_FOUND)
+        .json({ error: UTILISATEUR_NOT_FOUND_ERR });
+    }
+    if (erreur.message === INVALID_CREDENTIALS_ERR) {
+      return res
+        .status(HttpStatusCodes.UNAUTHORIZED)
+        .json({ error: INVALID_CREDENTIALS_ERR });
+    }
+    return res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: 'Erreur serveur' });
+  }
 }
+
 
 // **** Export default **** //
 

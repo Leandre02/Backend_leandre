@@ -76,7 +76,7 @@ describe('JetonRouter', () => {
       async () => {
         const credentialsIncomplets = {
           email: 'jean.dupont@example.com',
-          // motDePasse manquant
+          
         };
 
         const res: TRes = await agent

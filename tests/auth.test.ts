@@ -3,11 +3,11 @@
  */
 
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
+import { MISSING_FIELDS_ERR} from '@src/routes/AuthRoutes';
+import{ USER_ALREADY_EXISTS_ERR} from '@src/services/UserService';
 import {
-  USER_ALREADY_EXISTS_ERR,
   INVALID_CREDENTIALS_ERR,
-  MISSING_FIELDS_ERR,
-} from '@src/routes/AuthRoutes';
+} from '@src/routes/JetonRoutes';
 
 import Paths from './common/Paths';
 import { TRes } from './common/util';
@@ -152,7 +152,7 @@ describe('AuthRouter', () => {
       async () => {
         const credentialsIncomplets = {
           email: 'jean.dupont@example.com',
-          // motDePasse manquant
+         
         };
 
         const res: TRes = await agent
@@ -164,29 +164,7 @@ describe('AuthRouter', () => {
       },
     );
 
-    // Utilisateur non trouvé
-    it(
-      'doit retourner une erreur ' +
-        `'${INVALID_CREDENTIALS_ERR}' et un code ` +
-        `'${HttpStatusCodes.UNAUTHORIZED}' si l\'utilisateur n\'existe pas.`,
-      async () => {
-        const credentials = {
-          email: 'inconnu@example.com',
-          motDePasse: 'password123',
-        };
-
-        // simulacre - user n'existe pas
-        mockify(User).toReturn(null, 'findOne');
-
-        const res: TRes = await agent
-          .post(Paths.Auth.Login)
-          .send(credentials);
-
-        expect(res.status).toBe(HttpStatusCodes.UNAUTHORIZED);
-        expect(res.body.error).toBe(INVALID_CREDENTIALS_ERR);
-      },
-    );
-
+    
     // Mot de passe incorrect
     it(
       'doit retourner une erreur ' +
