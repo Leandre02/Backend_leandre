@@ -20,6 +20,7 @@ export const INVALID_CREDENTIALS_ERR = 'Email ou mot de passe incorrect';
  */
 async function generateToken(utilisateur: IUserLogin): Promise<string> {
   // check si l'utilisateur existe dans la BD
+  // TODO : JetonService.generateToken devrait appeler UserService.findByEmail au lieu de User.findOne.
   const utilisateurBD = await User.findOne({ email: utilisateur.email });
 
   if (!utilisateurBD) {

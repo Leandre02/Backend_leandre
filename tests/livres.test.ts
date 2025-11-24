@@ -2,6 +2,9 @@
  * Projet intégrateur - Dev web 3
  */
 
+import { beforeAll } from 'vitest';
+import { IUser, User } from '@src/models/User';
+
 import insertUrlParams from 'inserturlparams';
 import { customDeepCompare } from 'jet-validators/utils';
 
@@ -57,6 +60,17 @@ const DB_LIVRES: ILivre[] = [
   },
 ] as const;
 
+let tokenValide: string;
+
+const DB_USER_TOKEN: IUser = {
+  _id: new Types.ObjectId('507f1f77bcf86cd799439021'),
+  nom: 'Jean Dupont',
+  email: 'jean.dupont@example.com',
+  motDePasse: 'password123',
+  dateCreation: new Date(),
+};
+
+
 // Comparateur pour les livres
 const compareLivresArrays = customDeepCompare({
   onlyCompareProps: ['titreLivre', 'auteurPrincipal', 'isbn', 'estDisponible'],
@@ -69,6 +83,20 @@ const mockify = require('@jazim/mock-mongoose');
 ******************************************************************************/
 
 describe('LivreRouter', () => {
+
+  beforeAll(async () => {
+    // simulacre - pour que /generatetoken trouve un user
+    mockify(User).toReturn(DB_USER_TOKEN, 'findOne');
+
+    const res = await agent.post(Paths.GenerateToken.Get).send({
+      email: DB_USER_TOKEN.email,
+      motDePasse: DB_USER_TOKEN.motDePasse,
+    });
+
+    tokenValide = res.body.token;
+  });
+
+
   // **** Tests GET ALL **** //
 
   // Extraire tous les livres
@@ -248,6 +276,7 @@ describe('LivreRouter', () => {
         // Requête HTTP POST pour ajouter un nouveau livre
         const res = await agent
           .post(Paths.Livres.Add)
+          .set('Authorization', `Bearer ${tokenValide}`)
           .send({ livre: nouveauLivre });
 
         expect(res.status).toBe(HttpStatusCodes.CREATED);
@@ -261,6 +290,7 @@ describe('LivreRouter', () => {
       async () => {
         const res: TRes = await agent
           .post(Paths.Livres.Add)
+          .set('Authorization', `Bearer ${tokenValide}`)
           .send({ livre: null });
 
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
@@ -287,7 +317,10 @@ describe('LivreRouter', () => {
         mockify(Livre).toReturn(livre, 'findOne').toReturn(livre, 'save');
 
         // Requête HTTP PUT pour modifier un livre (avec l'ID dans l'URL)
-        const res = await agent.put(getPath(livre._id)).send({ livre });
+        const res = await agent
+          .put(getPath(livre._id))
+          .set('Authorization', `Bearer ${tokenValide}`)
+          .send({ livre });
 
         expect(res.status).toBe(HttpStatusCodes.OK);
       },
@@ -309,6 +342,7 @@ describe('LivreRouter', () => {
         // Requête HTTP PUT pour modifier un livre inexistant
         const res: TRes = await agent
           .put(getPath(livreIntrouvable._id))
+          .set('Authorization', `Bearer ${tokenValide}`)
           .send({ livre: livreIntrouvable });
 
         expect(res.status).toBe(HttpStatusCodes.NOT_FOUND);
@@ -335,7 +369,9 @@ describe('LivreRouter', () => {
           .toReturn(livre, 'findOne')
           .toReturn({ deletedCount: 1 }, 'deleteOne');
 
-        const res = await agent.delete(getPath(livre._id));
+        const res = await agent
+        .delete(getPath(livre._id))
+        .set('Authorization', `Bearer ${tokenValide}`);
 
         expect(res.status).toBe(HttpStatusCodes.OK);
       },
@@ -350,9 +386,11 @@ describe('LivreRouter', () => {
         // simulacre qui retourne null
         mockify(Livre).toReturn(null, 'findOne');
 
-        const res: TRes = await agent.delete(
+        const res: TRes = await agent
+        .delete(
           getPath('507f1f77bcf86cd799439999'),
-        );
+        )
+        .set('Authorization', `Bearer ${tokenValide}`);
 
         expect(res.status).toBe(HttpStatusCodes.NOT_FOUND);
         expect(res.body.error).toBe(LIVRE_NOT_FOUND_ERR);
@@ -364,7 +402,9 @@ describe('LivreRouter', () => {
       'doit retourner une erreur et un code ' +
         `'${HttpStatusCodes.BAD_REQUEST}' si l\'ID est invalide.`,
       async () => {
-        const res: TRes = await agent.delete(getPath('id_invalide'));
+        const res: TRes = await agent
+        .delete(getPath('id_invalide'))
+        .set('Authorization', `Bearer ${tokenValide}`);
 
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
         expect(res.body.error).toBe('ID de livre invalide');

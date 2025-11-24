@@ -11,12 +11,24 @@ import ENV from '@src/common/constants/ENV';
  * Middleware pour authentifier le token JWT
  */
 export function verifierAuth(req: Request, res: Response, next: NextFunction) {
+  
+  // Ne pas vérifier le token si l'url est celui de la liste des exceptions
+ const routesPubliques = [
+   '/api/generatetoken/',
+   '/api/generatetoken',
+   '/api/auth/register/',
+   '/api/auth/register',
+   '/api/auth/login/',
+   '/api/auth/login',
+ ];
 
-  // Permet de bypasser l'authentification en mode test
-  if (process.env.NODE_ENV === 'test') {
-    next();
-    return;
-  }
+ if (routesPubliques.includes(req.originalUrl)) {
+   return next();
+ }
+
+ console.log('originalUrl =', req.originalUrl);
+ console.log('path =', req.path);
+
 
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -29,17 +41,13 @@ export function verifierAuth(req: Request, res: Response, next: NextFunction) {
   console.log(`Vérification du token: ${token}`);
 
   // vérifie le token
-  jwt.verify(
-    token,
-    ENV.Jwtsecret as string,
-    (err: any, user: any) => {
-      if (err) {
-        return res.sendStatus(HttpStatusCodes.FORBIDDEN);
-      }
-      // token valide
-      next();
-    },
-  );
+  jwt.verify(token, ENV.Jwtsecret as string, (err: any, user: any) => {
+    if (err) {
+      return res.sendStatus(HttpStatusCodes.FORBIDDEN);
+    }
+    // token valide
+    next();
+  });
 }
 
 export default verifierAuth;
