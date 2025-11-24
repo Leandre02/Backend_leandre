@@ -6,6 +6,8 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { User } from '@src/models/User';
 import jwt from 'jsonwebtoken';
 import { IReq, IRes } from './common/types';
+import ENV from '@src/common/constants/ENV';
+
 
 // **** Constantes **** //
 
@@ -54,8 +56,7 @@ async function register(req: IReq, res: IRes) {
     // créer le token JWT
     const token = jwt.sign(
       { id: nouvelUser._id, email: nouvelUser.email },
-      process.env.JWT_SECRET || 'secret_par_defaut',
-      { expiresIn: '7d' },
+      ENV.Jwtsecret as string,
     );
 
     res.status(HttpStatusCodes.CREATED).json({
@@ -119,8 +120,8 @@ async function login(req: IReq, res: IRes) {
     // créer le token JWT
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || 'secret_par_defaut',
-      { expiresIn: '7d' },
+      ENV.Jwtsecret as string,
+      
     );
 
     res.status(HttpStatusCodes.OK).json({
