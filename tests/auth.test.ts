@@ -6,6 +6,7 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { MISSING_FIELDS_ERR} from '@src/routes/AuthRoutes';
 import{ USER_ALREADY_EXISTS_ERR} from '@src/services/UserService';
 import {
+  UTILISATEUR_NOT_FOUND_ERR,
   INVALID_CREDENTIALS_ERR,
 } from '@src/routes/JetonRoutes';
 
@@ -134,9 +135,7 @@ describe('AuthRouter', () => {
         mockify(User).toReturn(DB_USERS[0], 'findOne');
 
         const res: TRes<{ message: string; token: string; user: any }> =
-          await agent
-            .post(Paths.Auth.Login)
-            .send(credentials);
+          await agent.post(Paths.Auth.Login).send(credentials);
 
         expect(res.status).toBe(HttpStatusCodes.OK);
         expect(res.body.message).toBe('Connexion réussie');
@@ -152,7 +151,6 @@ describe('AuthRouter', () => {
       async () => {
         const credentialsIncomplets = {
           email: 'jean.dupont@example.com',
-         
         };
 
         const res: TRes = await agent
@@ -164,7 +162,27 @@ describe('AuthRouter', () => {
       },
     );
 
-    
+    // Utilisateur non trouvé
+    it(
+      'doit retourner une erreur ' +
+        `'${UTILISATEUR_NOT_FOUND_ERR}' et un code ` +
+        `'${HttpStatusCodes.NOT_FOUND}' si l\'utilisateur n\'existe pas.`,
+      async () => {
+        const credentials = {
+          email: 'non.existant@example.com',
+          motDePasse: 'password123',
+        };
+
+        // simulacre - user n'existe pas
+        mockify(User).toReturn(null, 'findOne');
+
+        const res: TRes = await agent.post(Paths.Auth.Login).send(credentials);
+
+        expect(res.status).toBe(HttpStatusCodes.UNAUTHORIZED);
+        expect(res.body.error).toBe(INVALID_CREDENTIALS_ERR);
+      },
+    );
+
     // Mot de passe incorrect
     it(
       'doit retourner une erreur ' +
@@ -179,9 +197,7 @@ describe('AuthRouter', () => {
         // simulacre - user existe mais mauvais mot de passe
         mockify(User).toReturn(DB_USERS[0], 'findOne');
 
-        const res: TRes = await agent
-          .post(Paths.Auth.Login)
-          .send(credentials);
+        const res: TRes = await agent.post(Paths.Auth.Login).send(credentials);
 
         expect(res.status).toBe(HttpStatusCodes.UNAUTHORIZED);
         expect(res.body.error).toBe(INVALID_CREDENTIALS_ERR);

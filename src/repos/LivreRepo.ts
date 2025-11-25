@@ -96,14 +96,8 @@ async function update(livre: ILivre): Promise<ILivre> {
 /**
  * Supprimer un livre
  */
-async function deleteOne(id: mongoose.Types.ObjectId): Promise<boolean> {
-  const resultat = await Livre.deleteOne({ _id: id });
-  if (!resultat) {
-    console.error(`Le livre avec l'ID ${id} est introuvable.`);
-    return false;
-  } else {
-    return true;
-  }
+async function deleteOne(id: mongoose.Types.ObjectId): Promise<void> {
+  await Livre.deleteOne({ _id: id });
 }
 
 // **** Export default **** //

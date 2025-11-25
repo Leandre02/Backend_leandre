@@ -1,0 +1,14 @@
+[
+  {
+    "nom": "Jean Dupont",
+    "email": "jean.dupont@example.com",
+    "motDePasse": "password123",
+    "dateCreation": "2023-01-01T00:00:00Z"
+  },
+  {
+    "nom": "Marie Martin",
+    "email": "marie.martin@example.com",
+    "motDePasse": "secure456",
+    "dateCreation": "2023-02-15T00:00:00Z"
+  }
+]

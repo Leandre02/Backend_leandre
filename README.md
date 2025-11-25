@@ -10,4 +10,4 @@ API REST pour gérer une bibliothèque personnelle de livres avec authentificati
 2. Installez les modules node avec `npm install`.
 3. Complétez le code selon les instructions fournies.
 4. Exécuter le serveur avec `npm run dev`.
-5. Utiliser **Bruno** pour tester votre API (voir dossier bruno)
+5. Utiliser **Bruno** pour tester votre API

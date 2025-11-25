@@ -1,5 +1,6 @@
 /* Repository pour les requêtes MongoDB sur les utilisateurs
  * Projet intégrateur - Dev web 3
+* TODO : Ajouter les operations de modification et suppression d'utilisateur
  */
 
 import { IUser, User } from '@src/models/User';
