@@ -33,5 +33,5 @@ async function add(user: IUser): Promise<void> {
 
 export default {
   findByEmail,
-    add,
+  add,
 } as const;

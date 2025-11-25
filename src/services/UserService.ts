@@ -45,9 +45,9 @@ async function findByEmail(email: string): Promise<IUser> {
  */
 async function validatePassword(email: string, motDePasse: string): Promise<IUser> {
   const user = await UserRepo.findByEmail(email);
-    if (!user) {
-        throw new Error(UTILISATEUR_NOT_FOUND_ERR);
-    }
+  if (!user) {
+    throw new Error(UTILISATEUR_NOT_FOUND_ERR);
+  }
 
   if (user.motDePasse !== motDePasse) {
     throw new Error(INVALID_CREDENTIALS_ERR);

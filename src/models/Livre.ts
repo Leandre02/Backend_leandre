@@ -78,11 +78,11 @@ const LivreSchema = new Schema<ILivre>(
     },
     auteurPrincipal: {
       type: String,
-      required: [true, "Le nom de l'auteur principal est requis."],
-      minlength: [2, "Le nom de l'auteur doit contenir au moins 2 caractères."],
+      required: [true, 'Le nom de l\'auteur principal est requis.'],
+      minlength: [2, 'Le nom de l\'auteur doit contenir au moins 2 caractères.'],
       maxlength: [
         100,
-        "Le nom de l'auteur ne peut pas dépasser 100 caractères.",
+        'Le nom de l\'auteur ne peut pas dépasser 100 caractères.',
       ],
     },
     datePublication: {
@@ -110,7 +110,7 @@ const LivreSchema = new Schema<ILivre>(
       validate: {
         validator: validerISBN,
         message:
-          "Le format de l'ISBN est invalide. Format attendu: 978-X-XX-XXXXXX-X",
+          'Le format de l\'ISBN est invalide. Format attendu: 978-X-XX-XXXXXX-X',
       },
     },
     categories: {
@@ -124,15 +124,15 @@ const LivreSchema = new Schema<ILivre>(
     },
     prixAchat: {
       type: Number,
-      required: [true, "Le prix d'achat est requis."],
-      min: [0, "Le prix d'achat doit être positif ou zéro."],
-      max: [100, "Le prix d'achat ne peut pas dépasser 100$."],
+      required: [true, 'Le prix d\'achat est requis.'],
+      min: [0, 'Le prix d\'achat doit être positif ou zéro.'],
+      max: [100, 'Le prix d\'achat ne peut pas dépasser 100$.'],
     },
     evaluation: {
       type: Number,
       required: false,
-      min: [1, "L'évaluation doit être entre 1 et 5."],
-      max: [5, "L'évaluation doit être entre 1 et 5."],
+      min: [1, 'L\'évaluation doit être entre 1 et 5.'],
+      max: [5, 'L\'évaluation doit être entre 1 et 5.'],
     },
     commentairesPerso: {
       type: String,

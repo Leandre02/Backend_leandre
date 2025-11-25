@@ -51,7 +51,7 @@ describe('AuthRouter', () => {
     // Succès
     it(
       `doit retourner le code '${HttpStatusCodes.CREATED}' et un token ` +
-        "si l'inscription est réussie.",
+        'si l\'inscription est réussie.',
       async () => {
         const nouvelUser = {
           nom: 'Paul Tremblay',
@@ -62,7 +62,7 @@ describe('AuthRouter', () => {
         // simulacre de Mongoose - user n'existe pas encore
         mockify(User).toReturn(null, 'findOne').toReturn(nouvelUser, 'save');
 
-        const res: TRes<{ message: string; token: string; user: any }> =
+        const res: TRes<{ message: string, token: string, user: any }> =
           await agent
             .post(Paths.Auth.Register)
             .send(nouvelUser);
@@ -134,7 +134,7 @@ describe('AuthRouter', () => {
         // simulacre - user existe avec bon mot de passe
         mockify(User).toReturn(DB_USERS[0], 'findOne');
 
-        const res: TRes<{ message: string; token: string; user: any }> =
+        const res: TRes<{ message: string, token: string, user: any }> =
           await agent.post(Paths.Auth.Login).send(credentials);
 
         expect(res.status).toBe(HttpStatusCodes.OK);

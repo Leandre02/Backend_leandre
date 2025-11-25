@@ -103,7 +103,7 @@ async function add(req: IReq, res: IRes) {
     } else {
       return res
         .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Erreur lors de l'ajout du livre" });
+        .json({ error: 'Erreur lors de l\'ajout du livre' });
     }
   }
 }

@@ -23,9 +23,9 @@ export const MISSING_FIELDS_ERR = 'Tous les champs sont requis';
  */
 async function register(req: IReq, res: IRes) {
   const { nom, email, motDePasse } = req.body as {
-    nom: string;
-    email: string;
-    motDePasse: string;
+    nom: string,
+    email: string,
+    motDePasse: string,
   };
 
   // check si tous les champs sont présents
@@ -44,7 +44,7 @@ async function register(req: IReq, res: IRes) {
     });
 
     // créer le token JWT
-    const token = jwt.sign({ email }, ENV.Jwtsecret as string);
+    const token = jwt.sign({ email }, ENV.Jwtsecret);
 
     return res.status(HttpStatusCodes.CREATED).json({
       message: 'Utilisateur créé avec succès',
@@ -65,7 +65,7 @@ async function register(req: IReq, res: IRes) {
     }
     return res
       .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Erreur lors de l'inscription" });
+      .json({ error: 'Erreur lors de l\'inscription' });
   }
 }
 
@@ -74,8 +74,8 @@ async function register(req: IReq, res: IRes) {
  */
 async function login(req: IReq, res: IRes) {
   const { email, motDePasse } = req.body as {
-    email: string;
-    motDePasse: string;
+    email: string,
+    motDePasse: string,
   };
 
   // check si tous les champs sont présents
@@ -91,7 +91,7 @@ async function login(req: IReq, res: IRes) {
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      ENV.Jwtsecret as string,
+      ENV.Jwtsecret,
     );
 
     return res.status(HttpStatusCodes.OK).json({

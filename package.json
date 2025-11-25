@@ -4,13 +4,15 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node ./src",
     "dev:hot": "cross-env NODE_ENV=development ts-node ./src --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "build": "ts-node scripts/build.ts",
+    "lint": "eslint ."
   },
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@stylistic/eslint-plugin": "^5.4.0",
+    "@stylistic/eslint-plugin": "^5.6.1",
     "@types/jsonwebtoken": "^9.0.10",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

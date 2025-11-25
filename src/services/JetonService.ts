@@ -2,7 +2,7 @@
  * Projet intégrateur - Dev web 3
  */
 
-import { IUserLogin, User } from '@src/models/User';
+import { IUserLogin} from '@src/models/User';
 import jwt from 'jsonwebtoken';
 import { RouteError } from '@src/common/util/route-errors';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
@@ -38,7 +38,7 @@ async function generateToken(utilisateur: IUserLogin): Promise<string> {
       id: utilisateurBD._id,
       email: utilisateurBD.email,
     },
-    ENV.Jwtsecret as string,
+    ENV.Jwtsecret,
   );
 
   return token;

@@ -33,7 +33,7 @@ const DB_LIVRES: ILivre[] = [
     categories: ['Fiction', 'Dystopie', 'Classique'],
     prixAchat: 25.99,
     evaluation: 5,
-    commentairesPerso: "Un chef-d'oeuvre intemporel",
+    commentairesPerso: 'Un chef-d\'oeuvre intemporel',
   },
   {
     _id: new Types.ObjectId('507f1f77bcf86cd799439012'),
@@ -86,17 +86,17 @@ describe('LivreRouter', () => {
 
   beforeAll(async () => {
   // simulacre - pour que /generatetoken trouve un user
-  mockify(User).toReturn(DB_USER_TOKEN, 'findOne');
+    mockify(User).toReturn(DB_USER_TOKEN, 'findOne');
 
-  const res = await agent
-    .post(Paths.GenerateToken.Get)
-    .send({
-      email: DB_USER_TOKEN.email,
-      motDePasse: DB_USER_TOKEN.motDePasse,
-    });
+    const res = await agent
+      .post(Paths.GenerateToken.Get)
+      .send({
+        email: DB_USER_TOKEN.email,
+        motDePasse: DB_USER_TOKEN.motDePasse,
+      });
 
-  tokenValide = res.body.token;
-});
+    tokenValide = res.body.token;
+  });
 
 
   // **** Tests GET ALL **** //
@@ -132,7 +132,7 @@ describe('LivreRouter', () => {
     // Succès
     it(
       `doit retourner un livre et un code '${HttpStatusCodes.OK}' ` +
-        "si l'ID est valide.",
+        'si l\'ID est valide.',
       async () => {
         const livre = DB_LIVRES[0];
 
@@ -196,7 +196,7 @@ describe('LivreRouter', () => {
 
         // Requête HTTP GET pour les livres disponibles
         const res: TRes<{ livres: ILivre[] }> = await agent.get(
-         Paths.Livres.GetDisponibles,
+          Paths.Livres.GetDisponibles,
         );
 
         expect(res.status).toBe(HttpStatusCodes.OK);
@@ -257,7 +257,7 @@ describe('LivreRouter', () => {
     // Succès
     it(
       `doit retourner le code '${HttpStatusCodes.CREATED}' ` +
-        "si l'ajout est réussi.",
+        'si l\'ajout est réussi.',
       async () => {
         const nouveauLivre: ILivre = {
           _id: new Types.ObjectId('507f1f77bcf86cd799439014'),
@@ -372,8 +372,8 @@ describe('LivreRouter', () => {
           .toReturn({ deletedCount: 1 }, 'deleteOne');
 
         const res = await agent
-        .delete(getPath(livre._id))
-        .set('Authorization', `Bearer ${tokenValide}`);
+          .delete(getPath(livre._id))
+          .set('Authorization', `Bearer ${tokenValide}`);
 
         expect(res.status).toBe(HttpStatusCodes.OK);
       },
@@ -389,10 +389,10 @@ describe('LivreRouter', () => {
         mockify(Livre).toReturn(null, 'findOne');
 
         const res: TRes = await agent
-        .delete(
-          getPath('507f1f77bcf86cd799439999'),
-        )
-        .set('Authorization', `Bearer ${tokenValide}`);
+          .delete(
+            getPath('507f1f77bcf86cd799439999'),
+          )
+          .set('Authorization', `Bearer ${tokenValide}`);
 
         expect(res.status).toBe(HttpStatusCodes.NOT_FOUND);
         expect(res.body.error).toBe(LIVRE_NOT_FOUND_ERR);
@@ -405,8 +405,8 @@ describe('LivreRouter', () => {
         `'${HttpStatusCodes.BAD_REQUEST}' si l\'ID est invalide.`,
       async () => {
         const res: TRes = await agent
-        .delete(getPath('id_invalide'))
-        .set('Authorization', `Bearer ${tokenValide}`);
+          .delete(getPath('id_invalide'))
+          .set('Authorization', `Bearer ${tokenValide}`);
 
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
         expect(res.body.error).toBe('ID de livre invalide');

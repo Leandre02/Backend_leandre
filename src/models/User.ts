@@ -35,12 +35,12 @@ const UserSchema = new Schema<IUser>(
     },
     email: {
       type: String,
-      required: [true, "L'email est requis."],
+      required: [true, 'L\'email est requis.'],
       unique: true,
       lowercase: true,
       validate: {
         validator: validerEmail,
-        message: "Le format de l'email est invalide.",
+        message: 'Le format de l\'email est invalide.',
       },
     },
     motDePasse: {
