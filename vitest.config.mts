@@ -1,5 +1,11 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import dotenv from 'dotenv';
+
+// Charge le .env.test pour les tests
+dotenv.config({
+  path: path.resolve(__dirname, '.env.test'),
+});
 
 const config = defineConfig({
   test: {

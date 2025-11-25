@@ -4,10 +4,14 @@
   "scripts": {
     "dev": "node --env-file=.env -r ts-node/register  ./src",
     "dev:hot": "cross-env NODE_ENV=development ts-node ./src --watch",
-    "test": "vitest",
+    "test": "cross-env NODE_ENV=test vitest",
     "build": "ts-node scripts/build.ts",
     "lint": "eslint .",
-    "start": "node dist/index.js"
+    "start": "node -r module-alias/register dist/index.js",
+    "start:local": "node --env-file=.env -r module-alias/register dist/index.js"
+  },
+  "_moduleAliases": {
+    "@src": "dist"
   },
   "engines": {
     "node": ">=16.0.0"
