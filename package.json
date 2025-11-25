@@ -2,7 +2,7 @@
   "name": "examen-api-2025",
   "version": "1.0.0",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development ts-node ./src",
+    "dev": "node --env-file=.env -r ts-node/register  ./src",
     "dev:hot": "cross-env NODE_ENV=development ts-node ./src --watch",
     "test": "vitest",
     "build": "ts-node scripts/build.ts",

@@ -7,9 +7,9 @@ import { connect } from 'mongoose';
 /******************************************************************************
                                 Constants
 ******************************************************************************/
+const PORT = process.env.PORT || ENV.Port || 3000;
 
-const SERVER_START_MSG =
-  'Express server started on port: ' + ENV.Port.toString();
+const SERVER_START_MSG = `Express server started on port: ${PORT}`;
 
 /******************************************************************************
                                   Run
