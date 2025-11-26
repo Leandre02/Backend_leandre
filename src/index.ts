@@ -1,20 +1,36 @@
 import logger from 'jet-logger';
+import { connect } from 'mongoose';
 
 import ENV from '@src/common/constants/ENV';
 import server from './server';
-import { connect } from 'mongoose';
 
 /******************************************************************************
-                                Constants
+                                 Constants
 ******************************************************************************/
+
 const PORT = process.env.PORT || ENV.Port || 3000;
 
 const SERVER_START_MSG = `Express server started on port: ${PORT}`;
 
 /******************************************************************************
-                                  Run
+                                   Run
 ******************************************************************************/
 
-connect(ENV.Mongodb).then(() =>
-  server.listen(PORT, () => logger.info(SERVER_START_MSG)),
-);
+// Patch temporaire pour gérer la connexion asynchrone à MongoDB avant de démarrer le serveur
+async function start() {
+  try {
+    // On essaye d'abord de se connecter à Mongo
+    await connect(ENV.Mongodb);
+    logger.info('MongoDB connecté');
+  } catch (err) {
+    // On log l'erreur mais on ne bloque pas le démarrage du serveur
+    logger.err('Erreur de connexion MongoDB', true);
+  }
+
+  // On démarre le serveur dans tous les cas
+  server.listen(PORT, () => {
+    logger.info(SERVER_START_MSG);
+  });
+}
+
+start();

@@ -43,6 +43,11 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
   }
 }
 
+// Route de test du serveur
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'OK' });
+});
+
 
 // Add APIs, must be after middleware
 app.use(Paths.Base, BaseRouter);
