@@ -28,9 +28,6 @@ jobs:
           npm install
           npm run build --if-present
           
-      - name: Create clean package without node_modules
-        run: |
-          rm -rf node_modules
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
