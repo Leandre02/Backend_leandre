@@ -20,7 +20,7 @@ const SERVER_START_MSG = `Express server started on port: ${PORT}`;
 async function start() {
   try {
     // On essaye d'abord de se connecter à Mongo
-    await connect(ENV.Mongodb);
+    await connect(ENV.Mongodb, { dbName: 'mycharacters' });
     logger.info('MongoDB connecté');
   } catch (err) {
     // On log l'erreur mais on ne bloque pas le démarrage du serveur
