@@ -8,7 +8,6 @@
     "build": "ts-node scripts/build.ts",
     "lint": "eslint .",
     "start": "node -r module-alias/register dist/index.js",
-    "start:local": "node --env-file=.env -r module-alias/register dist/index.js"
   },
   "_moduleAliases": {
     "@src": "dist"
