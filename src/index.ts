@@ -21,7 +21,7 @@ async function start() {
   try {
     // On essaye d'abord de se connecter à Mongo
     await connect(ENV.Mongodb, { dbName: 'mycharacters' });
-    logger.info('MongoDB connecté: db="${mongoose.connection.name}');
+    logger.info(`MongoDB connecté: db="${mongoose.connection.name}"`);
     logger.info(
       `Collections visibles: ${Object.keys( mongoose.connection.collections,
       ).join(', ')}`,
