@@ -7,6 +7,7 @@ import { IReq, IRes } from './common/types';
 import LivreService from '@src/services/LivreService';
 import { ILivre } from '@src/models/Livre';
 import mongoose from 'mongoose';
+import logger from 'jet-logger';
 
 // **** Constantes **** //
 
@@ -22,6 +23,7 @@ export const NO_BOOKS_FOUND_ERR = 'Aucun livre trouvé pour cette catégorie';
  */
 async function getAll(_: IReq, res: IRes) {
   const livres = await LivreService.getAll();
+  logger.info(`/api/livres -> ${livres.length} documents trouvés`);
   res.status(HttpStatusCodes.OK).json({ livres });
 }
 

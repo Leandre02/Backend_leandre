@@ -1,5 +1,5 @@
 import logger from 'jet-logger';
-import { connect } from 'mongoose';
+import mongoose, { connect } from 'mongoose';
 
 import ENV from '@src/common/constants/ENV';
 import server from './server';
@@ -21,7 +21,11 @@ async function start() {
   try {
     // On essaye d'abord de se connecter à Mongo
     await connect(ENV.Mongodb, { dbName: 'mycharacters' });
-    logger.info('MongoDB connecté');
+    logger.info('MongoDB connecté: db="${mongoose.connection.name}');
+    logger.info(
+      `Collections visibles: ${Object.keys( mongoose.connection.collections,
+      ).join(', ')}`,
+    );
   } catch (err) {
     // On log l'erreur mais on ne bloque pas le démarrage du serveur
     logger.err('Erreur de connexion MongoDB', true);
