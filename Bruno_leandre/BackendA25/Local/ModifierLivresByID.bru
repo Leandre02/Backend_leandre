@@ -1,0 +1,43 @@
+meta {
+  name: ModifierLivresByID
+  type: http
+  seq: 9
+}
+
+put {
+  url: http://localhost:3000/api/livres/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 6931ff5d66b8b7ded534f98e
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{jwttoken}}
+}
+
+body:json {
+  {
+    "livre": {
+      "titreLivre": "Fondation",
+      "auteurPrincipal": "Isaac Asimov",
+      "datePublication": "1951-05-01T00:00:00.000Z",
+      "nombrePages": 256,
+      "estDisponible": false,
+      "isbn": "978-2-29-033158-2",
+      "categories": ["Science-Fiction"],
+      "prixAchat": 21.5,
+      "evaluation": 5,
+      "commentairesPerso": "A lire un jour"
+    }
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

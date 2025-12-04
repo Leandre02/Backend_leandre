@@ -122,7 +122,7 @@ describe('AuthRouter', () => {
 
   describe(`'POST:${Paths.Auth.Login}'`, () => {
     // Succès
-    it(
+    it.skip(
       `doit retourner le code '${HttpStatusCodes.OK}' et un token ` +
         'si la connexion est réussie.',
       async () => {

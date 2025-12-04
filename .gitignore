@@ -138,7 +138,6 @@ vite.config.ts.timestamp-*
 
 # env pour les tests
 .env.test
-.env.*
 
 # env local
 .env

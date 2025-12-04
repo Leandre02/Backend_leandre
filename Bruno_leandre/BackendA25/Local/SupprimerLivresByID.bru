@@ -1,0 +1,25 @@
+meta {
+  name: SupprimerLivresByID
+  type: http
+  seq: 10
+}
+
+delete {
+  url: http://localhost:3000/api/livres/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 6931ff5d66b8b7ded534f98e
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{jwttoken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

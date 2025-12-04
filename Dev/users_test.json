@@ -1,0 +1,8 @@
+[
+  {
+    "nom": "Jean Dupont",
+    "email": "jean.dupont@example.com",
+    "motDePasse": "$2b$10$jODfU7EmKvneDr04JEZTK.zlSELNmlosWaw4TsrrFYVdMywrG9jii",
+    "dateCreation": "2023-01-01T00:00:00Z"
+  }
+]

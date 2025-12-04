@@ -3,12 +3,14 @@
  */
 import { IUser } from '@src/models/User';
 import UserRepo from '@src/repos/UserRepo';
+import bcrypt from 'bcrypt';
 import {
   UTILISATEUR_NOT_FOUND_ERR,
   INVALID_CREDENTIALS_ERR,
 } from '@src/routes/JetonRoutes';
 
 
+const costFactor = 10;
 
 // **** Constantes **** //
 export const USER_ALREADY_EXISTS_ERR = 'Un utilisateur avec cet email existe déjà';
@@ -23,7 +25,12 @@ async function register(user: IUser): Promise<void> {
   if (utilisateurExiste) {
     throw new Error(USER_ALREADY_EXISTS_ERR);
   } else {
-    await UserRepo.add(user);
+    const motDePasseHash = await bcrypt.hash(user.motDePasse, costFactor);
+    const nouvelUser: IUser = {
+      ...user,
+      motDePasse: motDePasseHash,
+    };
+    await UserRepo.add(nouvelUser);
   }
 }
 
@@ -48,11 +55,15 @@ async function validatePassword(email: string, motDePasse: string): Promise<IUse
   if (!user) {
     throw new Error(UTILISATEUR_NOT_FOUND_ERR);
   }
-
-  if (user.motDePasse !== motDePasse) {
-    throw new Error(INVALID_CREDENTIALS_ERR);
+  else {
+    const motDePasseValide = await bcrypt.compare(motDePasse, user.motDePasse);
+    if (!motDePasseValide) {
+      throw new Error(INVALID_CREDENTIALS_ERR);
+    } 
+    else {
+      return user;
+    }
   }
-  return user;
 }
 
 // **** Export default **** //

@@ -1,0 +1,28 @@
+meta {
+  name: GenerateToken
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/api/generatetoken
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "jean.dupont@example.com",
+    "motDePasse": "password123"
+  }
+  
+}
+
+script:post-response {
+  bru.setEnvVar("jwttoken", res.body.token)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

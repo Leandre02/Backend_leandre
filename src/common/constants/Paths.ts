@@ -20,13 +20,6 @@ export default {
     Register: '/register', // inscription d'un nouvel utilisateur
     Login: '/login', // connexion d'un utilisateur
   },
-  Users: {
-    Base: '/users',
-    GetAll: '/', // recupere tous les users
-    Add: '/', // ajoute un nouvel user
-    Update: '/:id', // met a jour les donnees d'un user
-    Delete: '/:id', // supprime un user par son ID
-  },
   GenerateToken: {
     Base: '/generatetoken',
     Get: '/', // genere un token d'authentification

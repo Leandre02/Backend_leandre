@@ -21,15 +21,13 @@ export const UTILISATEUR_NOT_FOUND_ERR = 'Utilisateur non trouvé';
  */
 async function generateToken(utilisateur: IUserLogin): Promise<string> {
   // check si l'utilisateur existe dans la BD
-  const utilisateurBD = await UserService.findByEmail(utilisateur.email);
+  const utilisateurBD = await UserService.validatePassword(
+    utilisateur.email,
+    utilisateur.motDePasse,
+  );
 
   if (!utilisateurBD) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, UTILISATEUR_NOT_FOUND_ERR);
-  }
-
-  // check si le mot de passe est correct
-  if (utilisateurBD.motDePasse !== utilisateur.motDePasse) {
-    throw new RouteError(HttpStatusCodes.UNAUTHORIZED, INVALID_CREDENTIALS_ERR);
   }
 
   // générer le token avec l'id et l'email
