@@ -1,0 +1,741 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "backend_bibliothèque",
+    "version": "1.0.0",
+    "summary": "API pour gérer une petite bibliothèque (users + livres).",
+    "description": "Petit backend de bibliothèque pour projet intégrateur (Dev web 3). Auth avec JWT + CRUD de livres."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Serveur de développement local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token JWT dans le header Authorization: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "UserRegister": {
+        "type": "object",
+        "required": ["nom", "email", "motDePasse"],
+        "properties": {
+          "nom": {
+            "type": "string",
+            "example": "Jean Dupont"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jean@example.com"
+          },
+          "motDePasse": {
+            "type": "string",
+            "format": "password",
+            "example": "monSuperMotDePasse123"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "required": ["email", "motDePasse"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jean@example.com"
+          },
+          "motDePasse": {
+            "type": "string",
+            "format": "password",
+            "example": "monSuperMotDePasse123"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id MongoDB de l'utilisateur",
+            "example": "661234abcd9012ef34567890"
+          },
+          "nom": {
+            "type": "string",
+            "example": "Jean Dupont"
+          },
+          "email": {
+            "type": "string",
+            "example": "jean@example.com"
+          }
+        }
+      },
+      "AuthSuccess": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Connexion réussie"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token JWT à utiliser pour les routes protégées",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        }
+      },
+      "ErreurGenerique": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Erreur serveur"
+          },
+          "details": {
+            "type": "string",
+            "nullable": true,
+            "example": "Erreur de validation"
+          }
+        }
+      },
+      "Livre": {
+        "type": "object",
+        "description": "Modèle de livre (basé sur ton schema Mongoose).",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Id MongoDB du livre",
+            "example": "661234abcd9012ef34567890"
+          },
+          "titreLivre": {
+            "type": "string",
+            "example": "Le Seigneur des Anneaux"
+          },
+          "descriptionLivre": {
+            "type": "string",
+            "example": "Roman fantastique très connu, un classique."
+          },
+          "auteur": {
+            "type": "string",
+            "example": "J.R.R. Tolkien"
+          },
+          "categorie": {
+            "type": "string",
+            "example": "Fantastique"
+          },
+          "estDisponible": {
+            "type": "boolean",
+            "example": true
+          },
+          "anneePublication": {
+            "type": "integer",
+            "example": 1954
+          },
+          "isbn": {
+            "type": "string",
+            "example": "9780261102385"
+          }
+        }
+      },
+      "LivreCreateRequest": {
+        "type": "object",
+        "required": ["livre"],
+        "properties": {
+          "livre": {
+            "$ref": "#/components/schemas/Livre"
+          }
+        }
+      },
+      "LivresArray": {
+        "type": "object",
+        "properties": {
+          "livres": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Livre"
+            }
+          }
+        }
+      },
+      "LivreResponse": {
+        "type": "object",
+        "properties": {
+          "livre": {
+            "$ref": "#/components/schemas/Livre"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Inscription d'un nouvel utilisateur",
+        "description": "Register un nouvel utilisateur (nom, email, motDePasse) et retourne un token JWT direct.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegister"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès + token JWT.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Champs manquants ou erreur de validation (Mongoose).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur lors de l'inscription.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Connexion d'un utilisateur",
+        "description": "Login avec email + motDePasse, retourne un JWT si tout est ok.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie, token et infos user retournés.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Champs manquants.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants invalides (email ou mot de passe incorrect).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur lors de la connexion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generatetoken/": {
+      "post": {
+        "tags": ["Token"],
+        "summary": "Générer un jeton à partir des credentials",
+        "description": "Petit endpoint pour générer un token JWT en donnant email + motDePasse (utilisé comme helper).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token généré avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Champs manquants (email ou motDePasse).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Utilisateur non trouvé.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email ou mot de passe incorrect.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur serveur lors de la génération du token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livres/": {
+      "get": {
+        "tags": ["Livres"],
+        "summary": "Récupérer tous les livres",
+        "description": "Retourne la liste de tous les livres de la bibliothèque.",
+        "responses": {
+          "200": {
+            "description": "Liste de livres retournée avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivresArray"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Livres"],
+        "summary": "Ajouter un nouveau livre",
+        "description": "Créer un nouveau livre. Route protégée: nécessite un token JWT valide.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LivreCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Livre ajouté avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Livre ajouté avec succès"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur de validation (Mongoose).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token manquant ou invalide.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur lors de l'ajout du livre.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livres/filtre/disponibles": {
+      "get": {
+        "tags": ["Livres"],
+        "summary": "Récupérer les livres disponibles",
+        "description": "Retourne tous les livres qui sont marqués comme disponibles.",
+        "responses": {
+          "200": {
+            "description": "Liste des livres disponibles.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivresArray"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livres/filtre/categorie/{categorie}": {
+      "get": {
+        "tags": ["Livres"],
+        "summary": "Récupérer les livres par catégorie",
+        "description": "Filtre les livres par catégorie donnée en paramètre.",
+        "parameters": [
+          {
+            "name": "categorie",
+            "in": "path",
+            "required": true,
+            "description": "Nom de la catégorie (ex: Fantastique, Romans...).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livres trouvés pour cette catégorie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivresArray"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Catégorie invalide ou manquante.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Aucun livre trouvé pour cette catégorie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livres/{id}": {
+      "get": {
+        "tags": ["Livres"],
+        "summary": "Récupérer un livre par ID",
+        "description": "Retourne un livre spécifique à partir de son identifiant MongoDB.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID du livre (ObjectId MongoDB).",
+            "schema": {
+              "type": "string",
+              "example": "661234abcd9012ef34567890"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livre trouvé.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivreResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID de livre invalide.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Livre introuvable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Livres"],
+        "summary": "Mettre à jour un livre",
+        "description": "Update d'un livre existant par son ID. Route protégée (JWT nécessaire).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID du livre à modifier.",
+            "schema": {
+              "type": "string",
+              "example": "661234abcd9012ef34567890"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LivreCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Livre modifié avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Livre modifié avec succès"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID invalide ou erreur de validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Livre introuvable pour cet ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token manquant ou invalide.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur lors de la modification du livre.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Livres"],
+        "summary": "Supprimer un livre",
+        "description": "Supprime un livre par son ID. Route protégée (JWT).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID du livre à supprimer.",
+            "schema": {
+              "type": "string",
+              "example": "661234abcd9012ef34567890"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livre supprimé avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Livre supprimé avec succès"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID de livre invalide.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Livre introuvable pour cet ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token manquant ou invalide.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur lors de la suppression du livre.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurGenerique"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

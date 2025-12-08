@@ -1,3 +1,5 @@
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
 import morgan from 'morgan';
 import path from 'path';
 import helmet from 'helmet';
@@ -13,7 +15,6 @@ import { RouteError } from '@src/common/util/route-errors';
 import { NodeEnvs } from '@src/common/constants';
 import cors from 'cors';
 
-
 /******************************************************************************
                                 Setup
 ******************************************************************************/
@@ -22,7 +23,6 @@ const app = express();
 
 // **** CORS **** //
 app.use(cors());
-
 
 // **** Middleware **** //
 
@@ -42,12 +42,19 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
     app.use(helmet());
   }
 }
+// Swagger UI
+const cheminDocApi = path.join(__dirname, 'config', 'documentation.json');
+const documentation = JSON.parse(fs.readFileSync(cheminDocApi, 'utf-8'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(documentation, {
+  customSiteTitle: 'backend_bibliothèque - API docs',
+}));
+
+
 
 // Route de test du serveur
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'OK' });
 });
-
 
 // Add APIs, must be after middleware
 app.use(Paths.Base, BaseRouter);
@@ -75,14 +82,16 @@ app.set('views', viewsDir);
 const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir));
 
-// Nav to users pg by default
-app.get('/', (_: Request, res: Response) => {
-  return res.redirect('/users');
+// rend disponible la documentation de l'interface logicielle
+app.get('/api-docs/', async (req, res) => {
+    res.set('Content-Security-Policy', 'script-src blob:');
+    res.set('Content-Security-Policy', 'worker-src blob:');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Redirect to login if not logged in.
-app.get('/users', (_: Request, res: Response) => {
-  return res.sendFile('users.html', { root: viewsDir });
+// redirige vers api-docs
+app.get('/', (req, res) => {
+    res.redirect('/api-docs');
 });
 
 /******************************************************************************
