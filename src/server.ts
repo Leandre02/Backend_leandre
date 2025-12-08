@@ -82,15 +82,11 @@ app.set('views', viewsDir);
 const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir));
 
-// rend disponible la documentation de l'interface logicielle
-app.get('/api-docs/', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// Nav to docs pg by default
+app.get('/', (_: Request, res: Response) => {
+  return res.redirect('/api-docs');
 });
 
-// redirige vers api-docs
-app.get('/', (req, res) => {
-    res.redirect('/api-docs');
-});
 
 /******************************************************************************
                                 Export default
