@@ -1,6 +1,9 @@
 import fs from 'fs-extra';
 import logger from 'jet-logger';
+import path from 'path';
 import childProcess from 'child_process';
+
+import fsNode from 'fs';
 
 /**
  * Start
@@ -19,6 +22,30 @@ import childProcess from 'child_process';
     await copy('./temp/config.js', './config.js');
     await copy('./temp/src', './dist');
     await remove('./temp/');
+    // Copie de la documentation Swagger
+const sourceDoc = path.join(
+  __dirname,
+  '..',
+  'src',
+  'config',
+  'documentation.json',
+);
+const destDir = path.join(__dirname, '..', 'dist', 'config');
+const destDoc = path.join(destDir, 'documentation.json');
+
+if (fsNode.existsSync(sourceDoc)) {
+  // crée le dossier dist/config si besoin
+  if (!fsNode.existsSync(destDir)) {
+    fsNode.mkdirSync(destDir, { recursive: true });
+  }
+  fsNode.copyFileSync(sourceDoc, destDoc);
+  // logger.info('Doc swagger copiée dans dist/config'); // optionnel
+} else {
+  logger.warn(
+    'documentation.json pas trouvé dans src/config, swagger risque de planter',
+  );
+}
+
   } catch (err) {
     logger.err(err);
     // eslint-disable-next-line n/no-process-exit
