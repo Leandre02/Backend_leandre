@@ -12,4 +12,4 @@ API REST pour gérer une bibliothèque personnelle de livres avec authentificati
 5. Exécutez le serveur avec `npm run dev`.
 6. Créer un utilisateur de test via l’API
 7. Consulter la documentation : https://bibliothequeapi-hmc6h5cfd3hsazau.canadacentral-01.azurewebsites.net/api-docs/
-7. Utiliser **Bruno** pour tester votre API (voir dossier Bruno_leandre)
+8. Utiliser **Bruno** pour tester votre API (voir dossier Bruno_leandre)
