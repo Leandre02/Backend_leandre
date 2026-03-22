@@ -12,7 +12,7 @@
 
 📖 **API Docs (Swagger):** [bibliothequeapi-hmc6h5cfd3hsazau.canadacentral-01.azurewebsites.net/api-docs](https://bibliothequeapi-hmc6h5cfd3hsazau.canadacentral-01.azurewebsites.net/api-docs/)
 
-> 🔗 **Frontend repo:** [Leandre02/projetfinal-frontend](https://github.com/Leandre02/projetfinal-frontend)
+> 🔗 **Frontend repo:** [Leandre02/projetfinal-frontend](https://github.com/Leandre02/Frontend_leandre.git)
 
 ---
 
@@ -120,7 +120,7 @@ npm run dev
 |---|---|
 | 📖 Swagger Docs | [API Documentation](https://bibliothequeapi-hmc6h5cfd3hsazau.canadacentral-01.azurewebsites.net/api-docs/) |
 | 🌐 Frontend live | [brave-rock-074e1840f.3.azurestaticapps.net](https://brave-rock-074e1840f.3.azurestaticapps.net) |
-| 💻 Frontend repo | [Leandre02/projetfinal-frontend](https://github.com/Leandre02/projetfinal-frontend) |
+| 💻 Frontend repo | [Leandre02/projetfinal-frontend](https://github.com/Leandre02/Frontend_leandre.git) |
 
 ---
 
